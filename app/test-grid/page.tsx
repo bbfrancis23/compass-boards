@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { GridLayout, useContainerWidth, type Layout } from "react-grid-layout";
+import {
+  GridLayout,
+  noCompactor,
+  useContainerWidth,
+  type Layout,
+} from "react-grid-layout";
 import "react-resizable/css/styles.css";
 
 const initialLayout: Layout = [{ i: "a", x: 0, y: 0, w: 3, h: 2 }];
@@ -20,6 +25,7 @@ export default function TestGridPage() {
             width={width}
             layout={layout}
             gridConfig={{ cols: 12, rowHeight: 60 }}
+            compactor={noCompactor}
             onLayoutChange={setLayout}
           >
             <div key="a" style={{ background: "#4dabf7", borderRadius: 8 }}>
