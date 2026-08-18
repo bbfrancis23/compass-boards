@@ -23,8 +23,11 @@ export interface FormWidgetConfig {
   submitLabel?: string;
 }
 
-function fieldInitialValue(field: InputFieldConfig) {
-  return field.type === "number" ? 0 : "";
+function fieldInitialValue(_field: InputFieldConfig) {
+  // Always start empty (including number fields) so a required field that
+  // hasn't been touched is correctly caught by validation below, instead of
+  // silently passing because 0 isn't "" / null / undefined.
+  return "";
 }
 
 /**
@@ -66,7 +69,12 @@ export function FormWidget({ instance, boardId }: WidgetComponentProps<FormWidge
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await addWidgetData(boardId, instance.id, values);
+      // Drop untouched optional fields (still "") so they don't persist as
+      // junk empty strings in the JSON payload.
+      const payload = Object.fromEntries(
+        Object.entries(values).filter(([, value]) => value !== ""),
+      );
+      await addWidgetData(boardId, instance.id, payload);
       form.reset();
     } catch (err) {
       console.error("Failed to save widget data", err);
