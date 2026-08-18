@@ -15,7 +15,15 @@ export interface LayoutUpdate {
 
 export async function getBoardWidgets(boardId: string): Promise<WidgetInstance[]> {
   const rows = await db
-    .select()
+    .select({
+      id: widgetInstances.id,
+      type: widgetInstances.type,
+      x: widgetInstances.x,
+      y: widgetInstances.y,
+      w: widgetInstances.w,
+      h: widgetInstances.h,
+      config: widgetInstances.config,
+    })
     .from(widgetInstances)
     .where(eq(widgetInstances.boardId, boardId))
     .orderBy(asc(widgetInstances.id));
