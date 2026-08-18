@@ -19,7 +19,10 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
 
   const widgets = await getBoardWidgets(boardId);
   const entries = await Promise.all(
-    widgets.map(async (widget) => [widget.id, await getWidgetData(boardId, widget.id)] as const),
+    widgets.map(async (widget) => {
+      const rows = await getWidgetData(boardId, widget.id);
+      return [widget.id, { type: widget.type, rows }] as const;
+    }),
   );
   const data: BoardData = Object.fromEntries(entries);
 
