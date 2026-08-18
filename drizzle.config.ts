@@ -1,4 +1,7 @@
+import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
+
+config({ path: ".env.local" });
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required (e.g. file:./local.db for local dev)");
@@ -10,6 +13,6 @@ export default defineConfig({
   out: "./db/migrations",
   dbCredentials: {
     url: process.env.DATABASE_URL,
-    authToken: process.env.DATABASE_AUTH_TOKEN,
+    authToken: process.env.DATABASE_AUTH_TOKEN || undefined,
   },
 });
