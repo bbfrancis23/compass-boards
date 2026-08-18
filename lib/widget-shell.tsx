@@ -13,10 +13,11 @@ export interface WidgetShellProps {
  * Shared chrome around every widget: title bar (also the react-grid-layout
  * drag handle), remove button, and a scrollable content area.
  *
- * DashboardCanvas should configure react-grid-layout with
+ * DashboardCanvas should still configure react-grid-layout with
  * `dragConfig={{ handle: ".widget-drag-handle", cancel: ".widget-remove-button" }}`
- * so dragging starts from the title bar without the remove button
- * triggering a drag.
+ * for keyboard/other input paths, but the remove button also stops
+ * mousedown/pointerdown propagation itself so it can't start a drag even if
+ * that config is missed or misconfigured.
  */
 export function WidgetShell({ title, onRemove, children }: WidgetShellProps) {
   return (
@@ -43,6 +44,8 @@ export function WidgetShell({ title, onRemove, children }: WidgetShellProps) {
             color="gray"
             size="sm"
             aria-label={`Remove ${title}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={onRemove}
           >
             ×
