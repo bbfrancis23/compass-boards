@@ -141,6 +141,15 @@ async function seedFinancial() {
       },
     })),
   );
+
+  await db.insert(widgetInstances).values({
+    boardId: "financial",
+    type: "advice",
+    x: 0,
+    y: 6,
+    w: 12,
+    h: 4,
+  });
 }
 
 async function seedFitness() {
@@ -206,6 +215,15 @@ async function seedFitness() {
       data: { ...rest, date: daysAgo(workoutDaysAgo) },
     })),
   );
+
+  await db.insert(widgetInstances).values({
+    boardId: "fitness",
+    type: "advice",
+    x: 0,
+    y: 4,
+    w: 12,
+    h: 4,
+  });
 }
 
 async function main() {

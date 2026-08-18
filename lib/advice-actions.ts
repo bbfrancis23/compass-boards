@@ -3,10 +3,15 @@
 import { getBoardConfig } from "@/boards";
 import type { BoardData } from "./board-types";
 import { claude } from "./claude-client";
+import { ADVICE_ENABLED } from "./feature-flags";
 import { getBoardWidgets } from "./widget-actions";
 import { getWidgetData } from "./widget-data-actions";
 
 export async function getBoardAdvice(boardId: string): Promise<string> {
+  if (!ADVICE_ENABLED) {
+    throw new Error("Advice generation is temporarily disabled until sign-in is added.");
+  }
+
   const config = getBoardConfig(boardId);
   if (!config) {
     throw new Error(`Unknown board: "${boardId}"`);
@@ -20,8 +25,9 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
 
   const response = await claude.messages.create({
     model: "claude-opus-5",
-    max_tokens: 16000,
+    max_tokens: 2048,
     thinking: { type: "adaptive" },
+    output_config: { effort: "low" },
     messages: [{ role: "user", content: config.buildAdvicePrompt(data) }],
   });
 

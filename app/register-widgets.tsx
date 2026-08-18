@@ -9,6 +9,7 @@
 // as it's built.
 import "@/widgets/financial";
 import "@/widgets/fitness";
+import "@/widgets/advice";
 
 export function RegisterWidgets() {
   return null;
