@@ -6,8 +6,9 @@
 // registrations reached only through server-side imports don't populate
 // the browser's copy). Rendered once from the root layout, regardless of
 // which board page is active. Add each new domain's widgets import here
-// as it's built (e.g. import "@/widgets/fitness";).
+// as it's built.
 import "@/widgets/financial";
+import "@/widgets/fitness";
 
 export function RegisterWidgets() {
   return null;

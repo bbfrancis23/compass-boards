@@ -1,7 +1,8 @@
 import type { BoardConfig } from "@/lib/board-types";
 import { financialBoard } from "./financial.board";
+import { fitnessBoard } from "./fitness.board";
 
-const boardConfigs: BoardConfig[] = [financialBoard];
+const boardConfigs: BoardConfig[] = [financialBoard, fitnessBoard];
 
 export function getBoardConfig(boardId: string): BoardConfig | undefined {
   return boardConfigs.find((config) => config.id === boardId);
