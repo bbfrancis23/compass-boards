@@ -18,6 +18,9 @@
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
+  "engines": {
+    "node": "^20.0 || ^22.0 || >=24.0"
+  },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
