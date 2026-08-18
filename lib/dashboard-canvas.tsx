@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ResponsiveGridLayout, useContainerWidth, type Layout } from "react-grid-layout";
 import "react-resizable/css/styles.css";
 import { updateWidgetLayout } from "./widget-actions";
@@ -26,16 +26,40 @@ export function DashboardCanvas({ boardId, widgets }: DashboardCanvasProps) {
   );
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleLayoutChange = useCallback((nextLayout: Layout) => {
-    setLayout(nextLayout);
+  // Reconcile layout state when the widgets prop changes (widgets added or
+  // removed elsewhere, or a page refetch), keeping the in-session position
+  // of any widget that's still present rather than resetting everything to
+  // its last-saved position.
+  useEffect(() => {
+    setLayout((prevLayout) => {
+      const prevById = new Map(prevLayout.map((item) => [item.i, item]));
+      return widgets.map(
+        (widget) =>
+          prevById.get(widget.id) ?? {
+            i: widget.id,
+            x: widget.x,
+            y: widget.y,
+            w: widget.w,
+            h: widget.h,
+          },
+      );
+    });
+  }, [widgets]);
 
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    saveTimeoutRef.current = setTimeout(() => {
-      updateWidgetLayout(
-        nextLayout.map((item) => ({ id: item.i, x: item.x, y: item.y, w: item.w, h: item.h })),
-      ).catch((error) => console.error("Failed to save widget layout", error));
-    }, SAVE_DEBOUNCE_MS);
-  }, []);
+  const handleLayoutChange = useCallback(
+    (nextLayout: Layout) => {
+      setLayout(nextLayout);
+
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = setTimeout(() => {
+        updateWidgetLayout(
+          boardId,
+          nextLayout.map((item) => ({ id: item.i, x: item.x, y: item.y, w: item.w, h: item.h })),
+        ).catch((error) => console.error("Failed to save widget layout", error));
+      }, SAVE_DEBOUNCE_MS);
+    },
+    [boardId],
+  );
 
   return (
     <div ref={containerRef}>

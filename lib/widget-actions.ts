@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { widgetInstances } from "@/db/schema";
 
@@ -12,13 +12,18 @@ export interface LayoutUpdate {
   h: number;
 }
 
-export async function updateWidgetLayout(updates: LayoutUpdate[]) {
+export async function updateWidgetLayout(boardId: string, updates: LayoutUpdate[]) {
   await Promise.all(
-    updates.map((update) =>
-      db
+    updates.map((update) => {
+      const id = Number(update.id);
+      if (!Number.isInteger(id)) {
+        throw new Error(`Invalid widget instance id: "${update.id}"`);
+      }
+
+      return db
         .update(widgetInstances)
         .set({ x: update.x, y: update.y, w: update.w, h: update.h })
-        .where(eq(widgetInstances.id, Number(update.id))),
-    ),
+        .where(and(eq(widgetInstances.id, id), eq(widgetInstances.boardId, boardId)));
+    }),
   );
 }
