@@ -1,7 +1,7 @@
 import type { BoardConfig } from "@/lib/board-types";
+import { financialBoard } from "./financial.board";
 
-// Add each board's config here as boards/<id>.board.ts files are created.
-const boardConfigs: BoardConfig[] = [];
+const boardConfigs: BoardConfig[] = [financialBoard];
 
 export function getBoardConfig(boardId: string): BoardConfig | undefined {
   return boardConfigs.find((config) => config.id === boardId);

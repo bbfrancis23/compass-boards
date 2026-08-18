@@ -18,6 +18,12 @@ export interface LineChartWidgetConfig {
   dataKey: string;
   /** Which keys of each widget_data row to plot as lines. */
   series: LineChartSeriesConfig[];
+  /**
+   * Read another widget instance's data instead of this widget's own —
+   * e.g. an output chart visualizing entries logged through a separate
+   * input widget. Defaults to this widget's own instance id.
+   */
+  sourceWidgetId?: string;
 }
 
 /**
@@ -30,8 +36,8 @@ export function LineChartWidget({
   instance,
   boardId,
 }: WidgetComponentProps<LineChartWidgetConfig>) {
-  const { data, loading, error } = useWidgetData(boardId, instance.id);
   const config = instance.config;
+  const { data, loading, error } = useWidgetData(boardId, config?.sourceWidgetId ?? instance.id);
 
   if (loading) return <Loader size="sm" />;
   if (error)

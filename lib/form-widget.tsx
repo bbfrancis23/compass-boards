@@ -19,6 +19,8 @@ export interface InputFieldConfig {
 export interface FormWidgetConfig {
   /** Widget title shown in WidgetShell's title bar (falls back to the registry label). */
   title?: string;
+  /** Small notice rendered above the fields, e.g. to flag mock/non-real data. */
+  disclaimer?: string;
   fields: InputFieldConfig[];
   submitLabel?: string;
 }
@@ -87,6 +89,11 @@ export function FormWidget({ instance, boardId }: WidgetComponentProps<FormWidge
   return (
     <form onSubmit={handleSubmit}>
       <Stack gap="xs">
+        {config.disclaimer && (
+          <Text size="xs" c="dimmed">
+            {config.disclaimer}
+          </Text>
+        )}
         {fields.map((field) => {
           if (field.type === "number") {
             return (
