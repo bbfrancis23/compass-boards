@@ -74,8 +74,9 @@ export function DashboardCanvas({ boardId, widgets }: DashboardCanvasProps) {
           const widget = widgetsById.get(item.i);
           if (!widget) return null;
           const definition = widgetRegistry.get(widget.type);
-          const instanceTitle =
-            typeof widget.config?.title === "string" ? widget.config.title : undefined;
+          const configTitle =
+            typeof widget.config?.title === "string" ? widget.config.title.trim() : "";
+          const instanceTitle = configTitle.length > 0 ? configTitle : undefined;
 
           return (
             <div key={widget.id}>

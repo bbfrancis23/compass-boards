@@ -26,8 +26,11 @@ export interface LineChartWidgetConfig {
  * whose component is LineChartWidget and whose instances set dataKey/series
  * — no bespoke chart component needed per domain.
  */
-export function LineChartWidget({ instance }: WidgetComponentProps<LineChartWidgetConfig>) {
-  const { data, loading, error } = useWidgetData(instance.id);
+export function LineChartWidget({
+  instance,
+  boardId,
+}: WidgetComponentProps<LineChartWidgetConfig>) {
+  const { data, loading, error } = useWidgetData(boardId, instance.id);
   const config = instance.config;
 
   if (loading) return <Loader size="sm" />;

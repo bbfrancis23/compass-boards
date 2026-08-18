@@ -9,8 +9,10 @@ export interface UseWidgetDataResult {
   error: string | null;
 }
 
+const GENERIC_ERROR = "Failed to load widget data.";
+
 /** Fetches the widget_data rows (as plain JSON objects) for a widget instance. */
-export function useWidgetData(widgetInstanceId: string): UseWidgetDataResult {
+export function useWidgetData(boardId: string, widgetInstanceId: string): UseWidgetDataResult {
   const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,12 +22,13 @@ export function useWidgetData(widgetInstanceId: string): UseWidgetDataResult {
     setLoading(true);
     setError(null);
 
-    getWidgetData(widgetInstanceId)
+    getWidgetData(boardId, widgetInstanceId)
       .then((rows) => {
         if (!cancelled) setData(rows);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+        console.error("Failed to load widget data", err);
+        if (!cancelled) setError(GENERIC_ERROR);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -34,7 +37,7 @@ export function useWidgetData(widgetInstanceId: string): UseWidgetDataResult {
     return () => {
       cancelled = true;
     };
-  }, [widgetInstanceId]);
+  }, [boardId, widgetInstanceId]);
 
   return { data, loading, error };
 }
