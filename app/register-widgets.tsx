@@ -1,9 +1,12 @@
 "use client";
 
 // Side-effect imports: each file registers its widget type with the
-// registry. Rendered once from the root layout so every board's widget
-// types are registered in both the SSR and browser module graphs,
-// regardless of which board page is active.
+// registry. This is a client component so these imports land in the
+// browser bundle (the widget registry is a module-level singleton, and
+// registrations reached only through server-side imports don't populate
+// the browser's copy). Rendered once from the root layout, regardless of
+// which board page is active. Add each new domain's widgets import here
+// as it's built (e.g. import "@/widgets/fitness";).
 import "@/widgets/financial";
 
 export function RegisterWidgets() {
