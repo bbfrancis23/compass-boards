@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { GridLayout, useContainerWidth, type Layout } from "react-grid-layout";
+import "react-resizable/css/styles.css";
 
 const initialLayout: Layout = [{ i: "a", x: 0, y: 0, w: 3, h: 2 }];
 
