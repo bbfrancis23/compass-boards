@@ -20,7 +20,10 @@ const db = drizzle(
 );
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const daysAgo = (n: number) => new Date(Date.now() - n * DAY_MS).toISOString();
+// YYYY-MM-DD, matching what an <input type="date"> field submits (see
+// InputFieldType "date" in lib/form-widget.tsx), so seeded rows use the same
+// date format as rows a user adds through the form.
+const daysAgo = (n: number) => new Date(Date.now() - n * DAY_MS).toISOString().slice(0, 10);
 
 async function seedFinancial() {
   await db
