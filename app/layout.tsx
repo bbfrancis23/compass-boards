@@ -36,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MantineProvider theme={theme} defaultColorScheme="auto">
           <div style={{ display: "flex", minHeight: "100vh" }}>
             <BoardNav />
-            <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+            <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
           </div>
         </MantineProvider>
       </body>

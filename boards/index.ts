@@ -8,5 +8,15 @@ export function getBoardConfig(boardId: string): BoardConfig | undefined {
 }
 
 export function listBoardConfigs(): BoardConfig[] {
-  return boardConfigs;
+  return [...boardConfigs];
+}
+
+export interface BoardNavItem {
+  id: string;
+  label: string;
+}
+
+/** Serializable board metadata for client components like the nav sidebar. */
+export function listBoardNavItems(): BoardNavItem[] {
+  return boardConfigs.map(({ id, label }) => ({ id, label }));
 }
