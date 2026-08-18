@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button, Loader, Stack, Text } from "@mantine/core";
+import { ADVICE_ENABLED } from "./feature-flags";
 import { useBoardAdvice } from "./use-board-advice";
 import type { WidgetComponentProps } from "./widget-types";
 
@@ -18,6 +19,14 @@ export interface AdviceWidgetConfig {
 export function AdviceWidget({ boardId }: WidgetComponentProps<AdviceWidgetConfig>) {
   const [enabled, setEnabled] = useState(false);
   const { advice, loading, error } = useBoardAdvice(boardId, enabled);
+
+  if (!ADVICE_ENABLED) {
+    return (
+      <Text size="sm" c="dimmed">
+        Advice generation is temporarily disabled until sign-in is added.
+      </Text>
+    );
+  }
 
   if (!enabled) {
     return (
