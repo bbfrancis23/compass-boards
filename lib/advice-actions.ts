@@ -13,12 +13,10 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
   }
 
   const widgets = await getBoardWidgets(boardId);
-  const data: BoardData = {};
-  await Promise.all(
-    widgets.map(async (widget) => {
-      data[widget.id] = await getWidgetData(boardId, widget.id);
-    }),
+  const entries = await Promise.all(
+    widgets.map(async (widget) => [widget.id, await getWidgetData(boardId, widget.id)] as const),
   );
+  const data: BoardData = Object.fromEntries(entries);
 
   const response = await claude.messages.create({
     model: "claude-opus-5",
