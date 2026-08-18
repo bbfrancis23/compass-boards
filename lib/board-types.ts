@@ -5,7 +5,12 @@ export interface BoardWidgetData {
   rows: Record<string, unknown>[];
 }
 
-/** Per-widget data, keyed by widget instance id, as returned by `getWidgetData`. */
+/**
+ * Per-widget data, keyed by widget instance id. `rows` is whatever
+ * `getWidgetData` returns for that instance; `type` comes from the
+ * matching `getBoardWidgets` entry. Assembled together in getBoardAdvice
+ * (lib/advice-actions.ts).
+ */
 export type BoardData = Record<string, BoardWidgetData>;
 
 /** All logged rows across the board for widget instances of a given type. */
