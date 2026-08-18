@@ -9,9 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mantine/charts": "^9.5.1",
+    "@mantine/core": "^9.5.1",
+    "@mantine/form": "^9.5.1",
+    "@mantine/hooks": "^9.5.1",
     "next": "16.3.1",
+    "recharts": "^3.10.1",
     "react": "19.2.8",
     "react-dom": "19.2.8"
+  },
+  "engines": {
+    "node": "^20.0 || ^22.0 || >=24.0"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -20,6 +28,9 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
+    "postcss": "^8.5.26",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
     "typescript": "^5"
   }
 }
