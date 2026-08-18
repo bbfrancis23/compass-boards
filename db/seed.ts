@@ -20,7 +20,10 @@ const db = drizzle(
 );
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const daysAgo = (n: number) => new Date(Date.now() - n * DAY_MS).toISOString();
+// YYYY-MM-DD, matching what an <input type="date"> field submits (see
+// InputFieldType "date" in lib/form-widget.tsx), so seeded rows use the same
+// date format as rows a user adds through the form.
+const daysAgo = (n: number) => new Date(Date.now() - n * DAY_MS).toISOString().slice(0, 10);
 
 async function seedFinancial() {
   await db
@@ -155,20 +158,34 @@ async function seedFitness() {
       y: 0,
       w: 6,
       h: 4,
+      config: {
+        title: "Log Workout",
+        submitLabel: "Add",
+        fields: [
+          { key: "type", label: "Type", type: "text", required: true },
+          { key: "durationMin", label: "Duration (min)", type: "number", required: true },
+          { key: "calories", label: "Calories", type: "number", required: true },
+          { key: "distanceMi", label: "Distance (mi)", type: "number" },
+          { key: "date", label: "Date", type: "date", required: true },
+        ],
+      },
     })
     .returning();
 
-  const [progressWidget] = await db
-    .insert(widgetInstances)
-    .values({
-      boardId: "fitness",
-      type: "progress-chart",
-      x: 6,
-      y: 0,
-      w: 6,
-      h: 4,
-    })
-    .returning();
+  await db.insert(widgetInstances).values({
+    boardId: "fitness",
+    type: "progress-chart",
+    x: 6,
+    y: 0,
+    w: 6,
+    h: 4,
+    config: {
+      title: "Progress",
+      dataKey: "date",
+      series: [{ name: "calories", label: "Calories Burned" }],
+      sourceWidgetId: String(workoutLogWidget.id),
+    },
+  });
 
   const workouts = [
     { type: "Run", durationMin: 32, calories: 340, distanceMi: 3.5, daysAgo: 20 },
@@ -187,22 +204,6 @@ async function seedFitness() {
     workouts.map(({ daysAgo: workoutDaysAgo, ...rest }) => ({
       widgetInstanceId: workoutLogWidget.id,
       data: { ...rest, date: daysAgo(workoutDaysAgo) },
-    })),
-  );
-
-  const weights = [
-    { weightLbs: 182.4, daysAgo: 20 },
-    { weightLbs: 181.8, daysAgo: 16 },
-    { weightLbs: 181.0, daysAgo: 12 },
-    { weightLbs: 180.6, daysAgo: 8 },
-    { weightLbs: 179.9, daysAgo: 4 },
-    { weightLbs: 179.2, daysAgo: 0 },
-  ];
-
-  await db.insert(widgetData).values(
-    weights.map((w) => ({
-      widgetInstanceId: progressWidget.id,
-      data: { weightLbs: w.weightLbs, date: daysAgo(w.daysAgo) },
     })),
   );
 }
