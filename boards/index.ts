@@ -6,3 +6,7 @@ const boardConfigs: BoardConfig[] = [];
 export function getBoardConfig(boardId: string): BoardConfig | undefined {
   return boardConfigs.find((config) => config.id === boardId);
 }
+
+export function listBoardConfigs(): BoardConfig[] {
+  return boardConfigs;
+}

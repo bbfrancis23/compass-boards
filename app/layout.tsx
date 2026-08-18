@@ -4,6 +4,7 @@ import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/c
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
 import "./globals.css";
+import { BoardNav } from "./board-nav";
 import { theme } from "@/lib/theme";
 
 const geistSans = Geist({
@@ -33,7 +34,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <MantineProvider theme={theme} defaultColorScheme="auto">
-          {children}
+          <div style={{ display: "flex", minHeight: "100vh" }}>
+            <BoardNav />
+            <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+          </div>
         </MantineProvider>
       </body>
     </html>
