@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader, Text } from "@mantine/core";
+import { useState } from "react";
+import { Button, Loader, Stack, Text } from "@mantine/core";
 import { useBoardAdvice } from "./use-board-advice";
 import type { WidgetComponentProps } from "./widget-types";
 
@@ -9,9 +10,27 @@ export interface AdviceWidgetConfig {
   title?: string;
 }
 
-/** Calls the board's advice Server Action and renders the response text. */
+/**
+ * Calls the board's advice Server Action and renders the response text.
+ * Off by default — advice is only generated when the user asks for it,
+ * since each generation is a slow, token-costly Claude call.
+ */
 export function AdviceWidget({ boardId }: WidgetComponentProps<AdviceWidgetConfig>) {
-  const { advice, loading, error } = useBoardAdvice(boardId);
+  const [enabled, setEnabled] = useState(false);
+  const { advice, loading, error } = useBoardAdvice(boardId, enabled);
+
+  if (!enabled) {
+    return (
+      <Stack gap="xs">
+        <Text size="sm" c="dimmed">
+          Get AI-generated advice based on this board&apos;s current data.
+        </Text>
+        <Button size="xs" onClick={() => setEnabled(true)} style={{ alignSelf: "start" }}>
+          Generate advice
+        </Button>
+      </Stack>
+    );
+  }
 
   if (loading) return <Loader size="sm" />;
   if (error) {

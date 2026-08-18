@@ -11,13 +11,20 @@ export interface UseBoardAdviceResult {
 
 const GENERIC_ERROR = "Failed to load advice.";
 
-/** Fetches AI-generated advice for a board via the getBoardAdvice server action. */
-export function useBoardAdvice(boardId: string): UseBoardAdviceResult {
+/**
+ * Fetches AI-generated advice for a board via the getBoardAdvice server
+ * action. Only fires while `enabled` is true, so callers can gate the
+ * (slow, token-costly) request behind an explicit user action instead of
+ * firing it automatically on mount.
+ */
+export function useBoardAdvice(boardId: string, enabled: boolean): UseBoardAdviceResult {
   const [advice, setAdvice] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -37,7 +44,7 @@ export function useBoardAdvice(boardId: string): UseBoardAdviceResult {
     return () => {
       cancelled = true;
     };
-  }, [boardId]);
+  }, [boardId, enabled]);
 
   return { advice, loading, error };
 }

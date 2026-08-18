@@ -20,8 +20,9 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
 
   const response = await claude.messages.create({
     model: "claude-opus-5",
-    max_tokens: 16000,
+    max_tokens: 2048,
     thinking: { type: "adaptive" },
+    output_config: { effort: "low" },
     messages: [{ role: "user", content: config.buildAdvicePrompt(data) }],
   });
 
