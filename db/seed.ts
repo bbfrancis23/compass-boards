@@ -37,20 +37,70 @@ async function seedFinancial() {
       y: 0,
       w: 4,
       h: 3,
+      config: {
+        title: "Add Account Balance",
+        disclaimer: "Mock data only — not connected to any real bank account.",
+        submitLabel: "Add",
+        fields: [
+          { key: "name", label: "Account name", type: "text", required: true },
+          { key: "balance", label: "Balance", type: "number", required: true },
+        ],
+      },
     })
     .returning();
 
-  const [transactionsWidget] = await db
+  const [transactionInputWidget] = await db
     .insert(widgetInstances)
     .values({
       boardId: "financial",
-      type: "spending-chart",
-      x: 4,
-      y: 0,
-      w: 8,
+      type: "transaction-input",
+      x: 0,
+      y: 3,
+      w: 4,
       h: 3,
+      config: {
+        title: "Add Transaction",
+        disclaimer: "Mock data only — not connected to any real bank account.",
+        submitLabel: "Add",
+        fields: [
+          { key: "category", label: "Category", type: "text", required: true },
+          { key: "merchant", label: "Merchant", type: "text", required: true },
+          { key: "amount", label: "Amount", type: "number", required: true },
+          { key: "date", label: "Date", type: "date", required: true },
+        ],
+      },
     })
     .returning();
+
+  await db.insert(widgetInstances).values({
+    boardId: "financial",
+    type: "net-worth-chart",
+    x: 4,
+    y: 0,
+    w: 8,
+    h: 3,
+    config: {
+      title: "Net Worth",
+      dataKey: "name",
+      series: [{ name: "balance", label: "Balance" }],
+      sourceWidgetId: String(accountsWidget.id),
+    },
+  });
+
+  await db.insert(widgetInstances).values({
+    boardId: "financial",
+    type: "spending-chart",
+    x: 4,
+    y: 3,
+    w: 8,
+    h: 3,
+    config: {
+      title: "Spending",
+      dataKey: "date",
+      series: [{ name: "amount", label: "Amount" }],
+      sourceWidgetId: String(transactionInputWidget.id),
+    },
+  });
 
   await db.insert(widgetData).values([
     { widgetInstanceId: accountsWidget.id, data: { name: "Checking", balance: 4250.32 } },
@@ -79,7 +129,7 @@ async function seedFinancial() {
 
   await db.insert(widgetData).values(
     transactions.map((t) => ({
-      widgetInstanceId: transactionsWidget.id,
+      widgetInstanceId: transactionInputWidget.id,
       data: {
         category: t.category,
         merchant: t.merchant,
