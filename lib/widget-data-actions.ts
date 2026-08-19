@@ -3,11 +3,14 @@
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { widgetData, widgetInstances } from "@/db/schema";
+import { requireSession } from "./require-session";
 
 export async function getWidgetData(
   boardId: string,
   widgetInstanceId: string,
 ): Promise<Record<string, unknown>[]> {
+  await requireSession();
+
   const id = Number(widgetInstanceId);
   if (!Number.isInteger(id)) {
     throw new Error(`Invalid widget instance id: "${widgetInstanceId}"`);
@@ -28,6 +31,8 @@ export async function addWidgetData(
   widgetInstanceId: string,
   data: Record<string, unknown>,
 ): Promise<void> {
+  await requireSession();
+
   const id = Number(widgetInstanceId);
   if (!Number.isInteger(id)) {
     throw new Error(`Invalid widget instance id: "${widgetInstanceId}"`);

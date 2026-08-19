@@ -4,10 +4,13 @@ import { getBoardConfig } from "@/boards";
 import type { BoardData } from "./board-types";
 import { claude } from "./claude-client";
 import { ADVICE_ENABLED } from "./feature-flags";
+import { requireSession } from "./require-session";
 import { getBoardWidgets } from "./widget-actions";
 import { getWidgetData } from "./widget-data-actions";
 
 export async function getBoardAdvice(boardId: string): Promise<string> {
+  await requireSession();
+
   if (!ADVICE_ENABLED) {
     throw new Error("Advice generation is temporarily disabled until sign-in is added.");
   }
