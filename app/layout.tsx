@@ -6,6 +6,7 @@ import "@mantine/charts/styles.css";
 import "./globals.css";
 import { BoardNav } from "./board-nav";
 import { RegisterWidgets } from "./register-widgets";
+import { UserMenu } from "./user-menu";
 import { theme } from "@/lib/theme";
 
 const geistSans = Geist({
@@ -37,7 +38,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MantineProvider theme={theme} defaultColorScheme="auto">
           <RegisterWidgets />
           <div style={{ display: "flex", minHeight: "100vh" }}>
-            <BoardNav />
+            <div style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}>
+              <BoardNav />
+              <div style={{ marginTop: "auto", padding: "var(--mantine-spacing-md)" }}>
+                <UserMenu />
+              </div>
+            </div>
             <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
           </div>
         </MantineProvider>
