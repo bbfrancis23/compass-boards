@@ -11,9 +11,10 @@ export const authConfig = {
     // (denies everyone) if that env var isn't set, rather than silently
     // allowing any GitHub user in.
     async signIn({ profile }) {
-      const ownerLogin = process.env.AUTH_GITHUB_OWNER_LOGIN;
+      const ownerLogin = process.env.AUTH_GITHUB_OWNER_LOGIN?.trim().toLowerCase();
       if (!ownerLogin) return false;
-      return typeof profile?.login === "string" && profile.login === ownerLogin;
+      // GitHub usernames are case-insensitive, so normalize both sides.
+      return typeof profile?.login === "string" && profile.login.toLowerCase() === ownerLogin;
     },
   },
 } satisfies NextAuthConfig;
