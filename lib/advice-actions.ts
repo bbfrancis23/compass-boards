@@ -4,10 +4,13 @@ import { getBoardConfig } from "@/boards";
 import type { BoardData } from "./board-types";
 import { claude } from "./claude-client";
 import { ADVICE_ENABLED } from "./feature-flags";
-import { getBoardWidgets } from "./widget-actions";
-import { getWidgetData } from "./widget-data-actions";
+import { requireSession } from "./require-session";
+import { queryWidgetData } from "./widget-data-queries";
+import { queryBoardWidgets } from "./widget-queries";
 
 export async function getBoardAdvice(boardId: string): Promise<string> {
+  await requireSession();
+
   if (!ADVICE_ENABLED) {
     throw new Error("Advice generation is temporarily disabled until sign-in is added.");
   }
@@ -17,10 +20,10 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
     throw new Error(`Unknown board: "${boardId}"`);
   }
 
-  const widgets = await getBoardWidgets(boardId);
+  const widgets = await queryBoardWidgets(boardId);
   const entries = await Promise.all(
     widgets.map(async (widget) => {
-      const rows = await getWidgetData(boardId, widget.id);
+      const rows = await queryWidgetData(boardId, widget.id);
       return [widget.id, { type: widget.type, rows }] as const;
     }),
   );
