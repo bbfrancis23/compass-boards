@@ -1,18 +1,24 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-export const boards = sqliteTable("boards", {
-  id: text("id").primaryKey(),
-  domain: text("domain").notNull(),
-  label: text("label").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`(unixepoch())`),
-});
+export const boards = sqliteTable(
+  "boards",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    // Auth.js session.user.id (the GitHub account's numeric id, as a string).
+    userId: text("user_id").notNull(),
+    domain: text("domain").notNull(),
+    label: text("label").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => [uniqueIndex("boards_user_domain_unique").on(table.userId, table.domain)],
+);
 
 export const widgetInstances = sqliteTable("widget_instances", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  boardId: text("board_id")
+  boardId: integer("board_id")
     .notNull()
     .references(() => boards.id),
   type: text("type").notNull(),
