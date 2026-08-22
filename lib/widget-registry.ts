@@ -5,6 +5,31 @@ import type { WidgetDefinition, WidgetKind } from "./widget-types";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyWidgetDefinition = WidgetDefinition<any>;
 
+// Order-insensitive structural equality for plain JSON-shaped data (every
+// defaultConfig in this app — strings/numbers/booleans/arrays/nested plain
+// objects, same shape as what's stored in the DB's JSON config columns).
+function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+
+  if (Array.isArray(a) || Array.isArray(b)) {
+    return (
+      Array.isArray(a) &&
+      Array.isArray(b) &&
+      a.length === b.length &&
+      a.every((item, i) => deepEqual(item, b[i]))
+    );
+  }
+
+  const aRecord = a as Record<string, unknown>;
+  const bRecord = b as Record<string, unknown>;
+  const aKeys = Object.keys(aRecord);
+  const bKeys = Object.keys(bRecord);
+  return (
+    aKeys.length === bKeys.length && aKeys.every((key) => deepEqual(aRecord[key], bRecord[key]))
+  );
+}
+
 // Widget files self-register via a top-level call, which re-runs whenever
 // Fast Refresh re-evaluates that module — not just on a cold load — so
 // register() can't simply throw on any repeat type. This compares the
@@ -19,7 +44,7 @@ function definitionsMatch(a: AnyWidgetDefinition, b: AnyWidgetDefinition): boole
     a.label === b.label &&
     a.defaultSize.w === b.defaultSize.w &&
     a.defaultSize.h === b.defaultSize.h &&
-    JSON.stringify(a.defaultConfig) === JSON.stringify(b.defaultConfig)
+    deepEqual(a.defaultConfig, b.defaultConfig)
   );
 }
 
@@ -29,7 +54,11 @@ class WidgetRegistry {
   register<TConfig>(definition: WidgetDefinition<TConfig>): void {
     const existing = this.definitions.get(definition.type);
     if (existing && !definitionsMatch(existing, definition)) {
-      throw new Error(`Widget type "${definition.type}" is already registered`);
+      throw new Error(
+        `Widget type "${definition.type}" is already registered with a conflicting ` +
+          `definition (kind, label, defaultSize, or defaultConfig differs) — two widgets ` +
+          `are using the same type string.`,
+      );
     }
     // Always store the incoming definition (not just on first sight), so a
     // Fast Refresh re-registration picks up its fresh `component` reference
