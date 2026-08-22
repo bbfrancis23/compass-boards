@@ -6,6 +6,7 @@ import "@mantine/charts/styles.css";
 import "./globals.css";
 import { BoardNav } from "./board-nav";
 import { RegisterWidgets } from "./register-widgets";
+import { SuppressColorSchemeScriptWarning } from "./suppress-color-scheme-script-warning";
 import { UserMenu } from "./user-menu";
 import { theme } from "@/lib/theme";
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       {...mantineHtmlProps}
     >
       <head>
+        <SuppressColorSchemeScriptWarning />
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body>
