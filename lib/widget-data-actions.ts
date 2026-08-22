@@ -7,8 +7,8 @@ export async function getWidgetData(
   boardId: string,
   widgetInstanceId: string,
 ): Promise<Record<string, unknown>[]> {
-  await requireSession();
-  return queryWidgetData(boardId, widgetInstanceId);
+  const session = await requireSession();
+  return queryWidgetData(boardId, session.user.id, widgetInstanceId);
 }
 
 export async function addWidgetData(
@@ -16,6 +16,6 @@ export async function addWidgetData(
   widgetInstanceId: string,
   data: Record<string, unknown>,
 ): Promise<void> {
-  await requireSession();
-  await insertWidgetData(boardId, widgetInstanceId, data);
+  const session = await requireSession();
+  await insertWidgetData(boardId, session.user.id, widgetInstanceId, data);
 }

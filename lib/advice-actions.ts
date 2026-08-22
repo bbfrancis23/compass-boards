@@ -9,7 +9,7 @@ import { queryWidgetData } from "./widget-data-queries";
 import { queryBoardWidgets } from "./widget-queries";
 
 export async function getBoardAdvice(boardId: string): Promise<string> {
-  await requireSession();
+  const session = await requireSession();
 
   if (!ADVICE_ENABLED) {
     throw new Error("Advice generation is temporarily disabled until sign-in is added.");
@@ -20,10 +20,10 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
     throw new Error(`Unknown board: "${boardId}"`);
   }
 
-  const widgets = await queryBoardWidgets(boardId);
+  const widgets = await queryBoardWidgets(boardId, session.user.id);
   const entries = await Promise.all(
     widgets.map(async (widget) => {
-      const rows = await queryWidgetData(boardId, widget.id);
+      const rows = await queryWidgetData(boardId, session.user.id, widget.id);
       return [widget.id, { type: widget.type, rows }] as const;
     }),
   );

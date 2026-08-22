@@ -16,5 +16,16 @@ export const authConfig = {
       // GitHub usernames are case-insensitive, so normalize both sides.
       return typeof profile?.login === "string" && profile.login.toLowerCase() === ownerLogin;
     },
+    // The default session callback only copies name/email/image. Board
+    // data is scoped per-user (db/schema.ts boards.userId), so callers
+    // need a stable id on the session — token.sub is already the GitHub
+    // account's numeric id (see the GitHub provider's profile() mapping),
+    // just not exposed on session.user by default.
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
   },
 } satisfies NextAuthConfig;

@@ -6,11 +6,20 @@ config({ path: ".env.local" });
 // via tsx). Build a plain client instead.
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
+import { and, eq } from "drizzle-orm";
 import { boards, widgetData, widgetInstances } from "./schema";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required (e.g. file:./local.db for local dev)");
 }
+
+if (!process.env.SEED_OWNER_GITHUB_ID) {
+  throw new Error(
+    "SEED_OWNER_GITHUB_ID is required — the numeric GitHub user id to own the seeded boards " +
+      "(matches session.user.id once signed in). Find it at https://api.github.com/users/<login>.",
+  );
+}
+const ownerUserId: string = process.env.SEED_OWNER_GITHUB_ID;
 
 const db = drizzle(
   createClient({
@@ -25,16 +34,24 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // date format as rows a user adds through the form.
 const daysAgo = (n: number) => new Date(Date.now() - n * DAY_MS).toISOString().slice(0, 10);
 
+async function getOrCreateBoard(domain: string, label: string): Promise<number> {
+  const [existing] = await db
+    .select({ id: boards.id })
+    .from(boards)
+    .where(and(eq(boards.userId, ownerUserId), eq(boards.domain, domain)));
+  if (existing) return existing.id;
+
+  const [created] = await db.insert(boards).values({ userId: ownerUserId, domain, label }).returning();
+  return created.id;
+}
+
 async function seedFinancial() {
-  await db
-    .insert(boards)
-    .values({ id: "financial", domain: "financial", label: "Financial" })
-    .onConflictDoNothing();
+  const boardId = await getOrCreateBoard("financial", "Financial");
 
   const [accountsWidget] = await db
     .insert(widgetInstances)
     .values({
-      boardId: "financial",
+      boardId,
       type: "account-balances",
       x: 0,
       y: 0,
@@ -55,7 +72,7 @@ async function seedFinancial() {
   const [transactionInputWidget] = await db
     .insert(widgetInstances)
     .values({
-      boardId: "financial",
+      boardId,
       type: "transaction-input",
       x: 0,
       y: 3,
@@ -76,7 +93,7 @@ async function seedFinancial() {
     .returning();
 
   await db.insert(widgetInstances).values({
-    boardId: "financial",
+    boardId,
     type: "net-worth-chart",
     x: 4,
     y: 0,
@@ -91,7 +108,7 @@ async function seedFinancial() {
   });
 
   await db.insert(widgetInstances).values({
-    boardId: "financial",
+    boardId,
     type: "spending-chart",
     x: 4,
     y: 3,
@@ -143,7 +160,7 @@ async function seedFinancial() {
   );
 
   await db.insert(widgetInstances).values({
-    boardId: "financial",
+    boardId,
     type: "advice",
     x: 0,
     y: 6,
@@ -153,15 +170,12 @@ async function seedFinancial() {
 }
 
 async function seedFitness() {
-  await db
-    .insert(boards)
-    .values({ id: "fitness", domain: "fitness", label: "Fitness" })
-    .onConflictDoNothing();
+  const boardId = await getOrCreateBoard("fitness", "Fitness");
 
   const [workoutLogWidget] = await db
     .insert(widgetInstances)
     .values({
-      boardId: "fitness",
+      boardId,
       type: "workout-log",
       x: 0,
       y: 0,
@@ -182,7 +196,7 @@ async function seedFitness() {
     .returning();
 
   await db.insert(widgetInstances).values({
-    boardId: "fitness",
+    boardId,
     type: "progress-chart",
     x: 6,
     y: 0,
@@ -217,7 +231,7 @@ async function seedFitness() {
   );
 
   await db.insert(widgetInstances).values({
-    boardId: "fitness",
+    boardId,
     type: "advice",
     x: 0,
     y: 4,

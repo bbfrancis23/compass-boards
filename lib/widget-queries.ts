@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { widgetInstances } from "@/db/schema";
+import { resolveBoardId } from "./board-queries";
 import type { WidgetInstance } from "./widget-types";
 
 export interface LayoutUpdate {
@@ -20,7 +21,10 @@ export interface LayoutUpdate {
 // itself can call these directly, instead of paying for a repeated check
 // per widget.
 
-export async function queryBoardWidgets(boardId: string): Promise<WidgetInstance[]> {
+export async function queryBoardWidgets(domain: string, userId: string): Promise<WidgetInstance[]> {
+  const boardId = await resolveBoardId(domain, userId);
+  if (boardId === null) return [];
+
   const rows = await db
     .select({
       id: widgetInstances.id,
@@ -46,7 +50,14 @@ export async function queryBoardWidgets(boardId: string): Promise<WidgetInstance
   }));
 }
 
-export async function applyWidgetLayout(boardId: string, updates: LayoutUpdate[]): Promise<void> {
+export async function applyWidgetLayout(
+  domain: string,
+  userId: string,
+  updates: LayoutUpdate[],
+): Promise<void> {
+  const boardId = await resolveBoardId(domain, userId);
+  if (boardId === null) return;
+
   await Promise.all(
     updates.map((update) => {
       const id = Number(update.id);

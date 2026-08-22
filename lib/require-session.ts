@@ -2,8 +2,9 @@ import "server-only";
 import { auth } from "@/auth";
 
 /**
- * Throws if there's no authenticated session. Call this at the top of
- * every Server Action that reads or writes board data.
+ * Throws if there's no authenticated session; otherwise returns it (with
+ * `user.id` guaranteed present, for scoping board data to that user). Call
+ * this at the top of every Server Action that reads or writes board data.
  *
  * app/boards/layout.tsx already redirects unauthenticated page loads, but
  * Server Actions are independently invokable HTTP endpoints — a request
@@ -13,7 +14,7 @@ import { auth } from "@/auth";
  */
 export async function requireSession() {
   const session = await auth();
-  if (!session) {
+  if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
   return session;
