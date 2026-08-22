@@ -10,7 +10,16 @@
 // next-themes and other theme libraries for the same reason; see #65).
 // Filter just this one known-safe message rather than the whole console,
 // and only in development — production builds never emit it.
-if (process.env.NODE_ENV === "development") {
+//
+// This module's top-level side effect re-runs on every Fast Refresh/HMR
+// reload, so guard on a global flag — otherwise each reload wraps the
+// already-wrapped console.error again, nesting closures indefinitely.
+const globalFlag = globalThis as typeof globalThis & {
+  __suppressColorSchemeScriptWarningInstalled?: boolean;
+};
+
+if (process.env.NODE_ENV === "development" && !globalFlag.__suppressColorSchemeScriptWarningInstalled) {
+  globalFlag.__suppressColorSchemeScriptWarningInstalled = true;
   const originalConsoleError = console.error;
   console.error = (...args: unknown[]) => {
     if (
@@ -19,7 +28,9 @@ if (process.env.NODE_ENV === "development") {
     ) {
       return;
     }
-    originalConsoleError(...args);
+    // .apply(console, ...) rather than a bare call, so console.error keeps
+    // its expected `this` binding when forwarding.
+    originalConsoleError.apply(console, args);
   };
 }
 
