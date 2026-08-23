@@ -18,7 +18,7 @@ export async function UserMenu() {
   const { name, email, image } = session.user;
 
   return (
-    <Stack gap="xs">
+    <Stack gap="xs" >
       <Group gap="xs" wrap="nowrap">
         {image && <Avatar src={image} size="sm" radius="xl" alt="" />}
         <Text size="sm" truncate>

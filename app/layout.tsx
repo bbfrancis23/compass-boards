@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/core";
+import { ColorSchemeScript, Group, MantineProvider, mantineHtmlProps } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
 import "./globals.css";
@@ -9,6 +9,11 @@ import { RegisterWidgets } from "./register-widgets";
 import { SuppressColorSchemeScriptWarning } from "./suppress-color-scheme-script-warning";
 import { UserMenu } from "./user-menu";
 import { theme } from "@/lib/theme";
+
+
+const BACKGROUND_IMAGE = '/compass-parchment-background.png';
+
+const PARCHMENT = '#e8dcc0';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,11 +45,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MantineProvider theme={theme} defaultColorScheme="auto">
           <RegisterWidgets />
           <div style={{ display: "flex", minHeight: "100vh" }}>
-            <div style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", flexShrink: 0, background: `${PARCHMENT} url('${BACKGROUND_IMAGE}') center / 100% no-repeat`,}}>
               <BoardNav />
-              <div style={{ marginTop: "auto", padding: "var(--mantine-spacing-md)" }}>
+
+               <Group gap={10} px={20} py={16} wrap="nowrap" style={{ borderTop: '0.5px solid rgba(92,67,38,0.3)' }}>
+                     
+             
                 <UserMenu />
-              </div>
+                     
+              </Group>
             </div>
             <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
           </div>

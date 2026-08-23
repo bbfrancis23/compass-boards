@@ -102,6 +102,7 @@ export function FormWidget({ instance, boardId }: WidgetComponentProps<FormWidge
                 name={field.key}
                 label={field.label}
                 placeholder={field.placeholder}
+                bg={'white'}
                 {...form.getInputProps(field.key)}
               />
             );

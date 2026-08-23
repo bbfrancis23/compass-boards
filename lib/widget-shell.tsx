@@ -24,6 +24,7 @@ export function WidgetShell({ title, onRemove, children }: WidgetShellProps) {
     <Paper
       withBorder
       radius="md"
+      
       style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}
     >
       <Group
@@ -31,10 +32,11 @@ export function WidgetShell({ title, onRemove, children }: WidgetShellProps) {
         wrap="nowrap"
         px="sm"
         py="xs"
+        bg={"earthBrown.4"}
         className="widget-drag-handle"
         style={{ cursor: "grab", borderBottom: "1px solid var(--mantine-color-default-border)" }}
       >
-        <Text size="sm" fw={600} truncate>
+        <Text size="sm" fw={600} c={"#fff"} truncate >
           {title}
         </Text>
         {onRemove && (
