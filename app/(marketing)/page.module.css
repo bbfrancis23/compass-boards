@@ -1,0 +1,350 @@
+.marketingRoot {
+  --bark: var(--mantine-color-black);
+  --coffee: var(--mantine-color-earthBrown-7);
+  --clay: var(--mantine-color-earthBrown-5);
+  --moss: var(--mantine-color-earthGreen-7);
+  --sage: var(--mantine-color-earthGreen-5);
+  --parchment: var(--mantine-color-white);
+  --line: var(--mantine-color-earthBrown-2);
+  --linen: #f1ede4;
+  --paper: #fbf9f4;
+}
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 28px 80px;
+  background: var(--paper);
+  color: var(--bark);
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page em {
+  font-family: var(--font-fraunces), serif;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--moss);
+}
+
+.page a {
+  color: inherit;
+}
+
+.page :focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- nav ---------- */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 0 24px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brandMark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--moss);
+  position: relative;
+  flex: none;
+}
+.brandMark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 11px solid var(--linen);
+  top: 5px;
+  left: 0;
+  right: 0;
+}
+.brandName {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 14px;
+  color: var(--coffee);
+}
+.navLinks a {
+  text-decoration: none;
+}
+.navLinks a:hover {
+  color: var(--moss);
+}
+.navCta {
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--bark);
+  color: var(--linen);
+  padding: 9px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.navCta:hover {
+  background: var(--coffee);
+}
+@media (max-width: 640px) {
+  .navLinks {
+    display: none;
+  }
+}
+
+/* ---------- hero ---------- */
+.hero {
+  padding: 36px 0 8px;
+}
+.eyebrow {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin: 0 0 14px;
+}
+.heading {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 440;
+  font-size: clamp(34px, 5.2vw, 54px);
+  line-height: 1.05;
+  margin: 0 0 20px;
+  max-width: 11.5ch;
+  color: var(--bark);
+}
+.sub {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--coffee);
+  max-width: 46ch;
+  margin: 0 0 44px;
+}
+
+.fadeIn {
+  animation: rise 0.6s ease both;
+}
+.d1 {
+  animation-delay: 0.05s;
+}
+.d2 {
+  animation-delay: 0.15s;
+}
+.d3 {
+  animation-delay: 0.25s;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fadeIn {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- how it works ---------- */
+.section {
+  padding: 80px 0 0;
+}
+.sectionHead {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin: 0 0 28px;
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
+.step {
+  background: var(--parchment);
+  border: 0.5px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+}
+.stepNum {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+  color: var(--sage);
+  margin: 0 0 16px;
+}
+.stepIcon {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--moss);
+}
+.step h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+.step p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--coffee);
+  margin: 0;
+}
+
+/* ---------- boards ---------- */
+.boards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .boards {
+    grid-template-columns: 1fr;
+  }
+}
+.boardCard {
+  background: var(--parchment);
+  border: 0.5px solid var(--line);
+  border-radius: 18px;
+  padding: 22px;
+}
+.boardCardHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.boardIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.boardIconFin {
+  background: var(--coffee);
+}
+.boardIconFit {
+  background: var(--moss);
+}
+.boardCardHead strong {
+  font-size: 15px;
+}
+.boardCardHead span {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 11px;
+  color: var(--sage);
+  margin-left: auto;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 3px 10px;
+}
+.statBar {
+  background: var(--bark);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.statBar p {
+  margin: 0;
+}
+.statBarKey {
+  color: #d9cfc1;
+  font-size: 12.5px;
+  margin-bottom: 3px;
+}
+.statBarValue {
+  color: var(--linen);
+  font-size: 21px;
+  font-weight: 600;
+  font-family: var(--font-plex-mono), monospace;
+}
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13px;
+}
+.rowLabel {
+  color: var(--bark);
+}
+.rowValue {
+  font-family: var(--font-plex-mono), monospace;
+  color: var(--coffee);
+  font-size: 12.5px;
+}
+
+/* ---------- footer ---------- */
+.stackRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 40px;
+}
+.stackChip {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 12px;
+  color: var(--coffee);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 11px;
+  background: var(--parchment);
+}
+.footer {
+  border-top: 0.5px solid var(--line);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--clay);
+}
+.footer a {
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--coffee);
+}
+.footer a:hover {
+  color: var(--moss);
+}
