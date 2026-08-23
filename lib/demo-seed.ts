@@ -18,19 +18,33 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // date format as rows a user adds through the form.
 const daysAgo = (n: number) => new Date(Date.now() - n * DAY_MS).toISOString().slice(0, 10);
 
-async function getOrCreateBoard(db: DB, userId: string, domain: string, label: string): Promise<number> {
+interface BoardLookup {
+  boardId: number;
+  /** True if this board already has widget instances -- seeding it again would insert duplicates. */
+  alreadySeeded: boolean;
+}
+
+async function getOrCreateBoard(db: DB, userId: string, domain: string, label: string): Promise<BoardLookup> {
   const [existing] = await db
     .select({ id: boards.id })
     .from(boards)
     .where(and(eq(boards.userId, userId), eq(boards.domain, domain)));
-  if (existing) return existing.id;
+  if (existing) {
+    const [widget] = await db
+      .select({ id: widgetInstances.id })
+      .from(widgetInstances)
+      .where(eq(widgetInstances.boardId, existing.id))
+      .limit(1);
+    return { boardId: existing.id, alreadySeeded: Boolean(widget) };
+  }
 
   const [created] = await db.insert(boards).values({ userId, domain, label }).returning();
-  return created.id;
+  return { boardId: created.id, alreadySeeded: false };
 }
 
 export async function seedFinancialDemo(db: DB, userId: string): Promise<void> {
-  const boardId = await getOrCreateBoard(db, userId, "financial", "Financial");
+  const { boardId, alreadySeeded } = await getOrCreateBoard(db, userId, "financial", "Financial");
+  if (alreadySeeded) return;
 
   const [accountsWidget] = await db
     .insert(widgetInstances)
@@ -154,7 +168,8 @@ export async function seedFinancialDemo(db: DB, userId: string): Promise<void> {
 }
 
 export async function seedFitnessDemo(db: DB, userId: string): Promise<void> {
-  const boardId = await getOrCreateBoard(db, userId, "fitness", "Fitness");
+  const { boardId, alreadySeeded } = await getOrCreateBoard(db, userId, "fitness", "Fitness");
+  if (alreadySeeded) return;
 
   const [workoutLogWidget] = await db
     .insert(widgetInstances)

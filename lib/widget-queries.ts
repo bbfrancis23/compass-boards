@@ -1,4 +1,5 @@
 import "server-only";
+import { LibsqlError } from "@libsql/client";
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { widgetInstances } from "@/db/schema";
@@ -39,9 +40,12 @@ export async function queryBoardWidgets(domain: string, userId: string): Promise
       await seedDemo(db, userId);
     } catch (err) {
       // Another concurrent request may have already seeded this user+domain
-      // (boards has a unique index on (user_id, domain)) -- only rethrow if
-      // the board still doesn't exist after all, i.e. this wasn't just that
-      // race.
+      // (boards has a unique index on (user_id, domain)) -- only treat a
+      // genuine unique-constraint violation as that race and recheck;
+      // anything else (a DB outage, a partial seeding failure, etc.) is a
+      // real error and should propagate instead of silently returning an
+      // empty/incomplete board.
+      if (!(err instanceof LibsqlError) || err.code !== "SQLITE_CONSTRAINT") throw err;
       boardId = await resolveBoardId(domain, userId);
       if (boardId === null) throw err;
     }
