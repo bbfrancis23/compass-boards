@@ -1,9 +1,15 @@
+import Link from "next/link";
+import { auth } from "@/auth";
+import { listBoardNavItems } from "@/boards";
 import { HeroDemo } from "./hero-demo";
 import styles from "./page.module.css";
 
 const REPO_URL = "https://github.com/bbfrancis23/compass-boards";
 
-export default function MarketingHomePage() {
+export default async function MarketingHomePage() {
+  const session = await auth();
+  const firstBoardId = listBoardNavItems()[0]?.id;
+
   return (
     <div className={styles.page}>
       <nav className={styles.nav}>
@@ -18,6 +24,15 @@ export default function MarketingHomePage() {
           <a className={styles.navCta} href={REPO_URL} target="_blank" rel="noopener noreferrer">
             View the code
           </a>
+          {session?.user && firstBoardId ? (
+            <Link className={styles.navCta} href={`/boards/${firstBoardId}`}>
+              Your boards
+            </Link>
+          ) : (
+            <Link className={styles.navCta} href="/signin">
+              Sign in
+            </Link>
+          )}
         </div>
       </nav>
 

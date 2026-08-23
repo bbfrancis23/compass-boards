@@ -89,7 +89,7 @@
 .navLinks a:hover {
   color: var(--moss);
 }
-.navCta {
+.nav .navCta {
   font-size: 13px;
   font-weight: 600;
   background: var(--bark);
