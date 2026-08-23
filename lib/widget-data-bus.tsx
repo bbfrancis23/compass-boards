@@ -11,6 +11,10 @@ interface WidgetDataBusValue {
 
 const WidgetDataBusContext = createContext<WidgetDataBusValue | null>(null);
 
+// Stable reference so callers outside a provider (or in tests) get a
+// referentially-stable no-op instead of a fresh function every render.
+function noop() {}
+
 export function WidgetDataBusProvider({ children }: { children: React.ReactNode }) {
   const [versions, setVersions] = useState<Record<string, number>>({});
 
@@ -37,5 +41,5 @@ export function useWidgetDataVersion(widgetInstanceId: string): number {
 /** Notifies the bus that widgetInstanceId's data changed, so any reader refetches. No-op outside a provider. */
 export function useNotifyWidgetDataChanged(): (widgetInstanceId: string) => void {
   const ctx = useContext(WidgetDataBusContext);
-  return ctx?.notifyWidgetDataChanged ?? (() => {});
+  return ctx?.notifyWidgetDataChanged ?? noop;
 }

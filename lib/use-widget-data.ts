@@ -35,7 +35,10 @@ export function useWidgetData(boardId: string, widgetInstanceId: string): UseWid
 
     getWidgetData(boardId, widgetInstanceId)
       .then((rows) => {
-        if (!cancelled) setData(rows);
+        if (!cancelled) {
+          setData(rows);
+          setError(null);
+        }
       })
       .catch((err: unknown) => {
         console.error("Failed to load widget data", err);
