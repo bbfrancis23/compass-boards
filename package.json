@@ -30,6 +30,9 @@
   "engines": {
     "node": "^20.0 || ^22.0 || >=24.0"
   },
+  "overrides": {
+    "esbuild": ">=0.25.0"
+  },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
