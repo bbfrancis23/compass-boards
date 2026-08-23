@@ -22,12 +22,23 @@ export function useBoardAdvice(boardId: string, enabled: boolean): UseBoardAdvic
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Reset loading/error as soon as a new request starts, rather than
+  // synchronously inside the effect below, per
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes.
+  const requestKey = enabled ? boardId : null;
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+  if (requestKey !== prevRequestKey) {
+    setPrevRequestKey(requestKey);
+    if (requestKey !== null) {
+      setLoading(true);
+      setError(null);
+    }
+  }
+
   useEffect(() => {
     if (!enabled) return;
 
     let cancelled = false;
-    setLoading(true);
-    setError(null);
 
     getBoardAdvice(boardId)
       .then((result) => {
