@@ -23,7 +23,7 @@ export function AdviceWidget({ boardId }: WidgetComponentProps<AdviceWidgetConfi
   if (!ADVICE_ENABLED) {
     return (
       <Text size="sm" c="dimmed">
-        Advice generation is temporarily disabled until sign-in is added.
+        Advice generation is finding its bearings — check back on this trail soon.
       </Text>
     );
   }
