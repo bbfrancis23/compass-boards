@@ -1,9 +1,19 @@
 import "server-only";
+import { LibsqlError } from "@libsql/client";
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { widgetInstances } from "@/db/schema";
 import { resolveBoardId } from "./board-queries";
+import { seedFinancialDemo, seedFitnessDemo } from "./demo-seed";
 import type { WidgetInstance } from "./widget-types";
+
+// Demo boards/widgets are otherwise only ever created by the db:seed CLI
+// script — auto-provision one of these on a user's first visit to that
+// domain instead of leaving them with a permanently empty board.
+const DEMO_SEEDERS = {
+  financial: seedFinancialDemo,
+  fitness: seedFitnessDemo,
+} satisfies Record<string, typeof seedFinancialDemo>;
 
 export interface LayoutUpdate {
   id: string;
@@ -22,8 +32,26 @@ export interface LayoutUpdate {
 // per widget.
 
 export async function queryBoardWidgets(domain: string, userId: string): Promise<WidgetInstance[]> {
-  const boardId = await resolveBoardId(domain, userId);
-  if (boardId === null) return [];
+  let boardId = await resolveBoardId(domain, userId);
+  if (boardId === null) {
+    const seedDemo = DEMO_SEEDERS[domain as keyof typeof DEMO_SEEDERS];
+    if (!seedDemo) return [];
+    try {
+      await seedDemo(db, userId);
+    } catch (err) {
+      // Another concurrent request may have already seeded this user+domain
+      // (boards has a unique index on (user_id, domain)) -- only treat a
+      // genuine unique-constraint violation as that race and recheck;
+      // anything else (a DB outage, a partial seeding failure, etc.) is a
+      // real error and should propagate instead of silently returning an
+      // empty/incomplete board.
+      if (!(err instanceof LibsqlError) || err.code !== "SQLITE_CONSTRAINT") throw err;
+      boardId = await resolveBoardId(domain, userId);
+      if (boardId === null) throw err;
+    }
+    boardId ??= await resolveBoardId(domain, userId);
+    if (boardId === null) return [];
+  }
 
   const rows = await db
     .select({

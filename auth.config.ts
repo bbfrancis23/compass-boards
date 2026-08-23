@@ -6,16 +6,6 @@ import GitHub from "next-auth/providers/github";
 export const authConfig = {
   providers: [GitHub],
   callbacks: {
-    // This is a single-owner app, not a multi-tenant one: only the GitHub
-    // account named by AUTH_GITHUB_OWNER_LOGIN may sign in. Fails closed
-    // (denies everyone) if that env var isn't set, rather than silently
-    // allowing any GitHub user in.
-    async signIn({ profile }) {
-      const ownerLogin = process.env.AUTH_GITHUB_OWNER_LOGIN?.trim().toLowerCase();
-      if (!ownerLogin) return false;
-      // GitHub usernames are case-insensitive, so normalize both sides.
-      return typeof profile?.login === "string" && profile.login.toLowerCase() === ownerLogin;
-    },
     // Without a database adapter, Auth.js deliberately does NOT set
     // token.sub from the provider's profile id — it mints a fresh random
     // UUID as `user.id` on every single sign-in (see @auth/core's
