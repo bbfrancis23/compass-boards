@@ -25,12 +25,10 @@ export interface FormWidgetConfig {
   submitLabel?: string;
 }
 
-function fieldInitialValue(_field: InputFieldConfig) {
-  // Always start empty (including number fields) so a required field that
-  // hasn't been touched is correctly caught by validation below, instead of
-  // silently passing because 0 isn't "" / null / undefined.
-  return "";
-}
+// Always start empty (including number fields) so a required field that
+// hasn't been touched is correctly caught by validation below, instead of
+// silently passing because 0 isn't "" / null / undefined.
+const FIELD_INITIAL_VALUE = "";
 
 /**
  * Generic, config-driven input form. Declares its fields via
@@ -45,7 +43,7 @@ export function FormWidget({ instance, boardId }: WidgetComponentProps<FormWidge
   const fields = config?.fields ?? [];
 
   const form = useForm({
-    initialValues: Object.fromEntries(fields.map((field) => [field.key, fieldInitialValue(field)])),
+    initialValues: Object.fromEntries(fields.map((field) => [field.key, FIELD_INITIAL_VALUE])),
     validate: Object.fromEntries(
       fields
         .filter((field) => field.required)
