@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "@mantine/form";
 import { Button, NumberInput, Stack, Text, TextInput } from "@mantine/core";
 import { addWidgetData } from "./widget-data-actions";
+import { useNotifyWidgetDataChanged } from "./widget-data-bus";
 import type { WidgetComponentProps } from "./widget-types";
 
 export type InputFieldType = "text" | "number" | "date";
@@ -41,6 +42,7 @@ export function FormWidget({ instance, boardId }: WidgetComponentProps<FormWidge
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fields = config?.fields ?? [];
+  const notifyWidgetDataChanged = useNotifyWidgetDataChanged();
 
   const form = useForm({
     initialValues: Object.fromEntries(fields.map((field) => [field.key, FIELD_INITIAL_VALUE])),
@@ -75,6 +77,7 @@ export function FormWidget({ instance, boardId }: WidgetComponentProps<FormWidge
         Object.entries(values).filter(([, value]) => value !== ""),
       );
       await addWidgetData(boardId, instance.id, payload);
+      notifyWidgetDataChanged(instance.id);
       form.reset();
     } catch (err) {
       console.error("Failed to save widget data", err);

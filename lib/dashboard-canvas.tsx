@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { ResponsiveGridLayout, useContainerWidth, type Layout } from "react-grid-layout";
 import "react-resizable/css/styles.css";
 import { updateWidgetLayout } from "./widget-actions";
+import { WidgetDataBusProvider } from "./widget-data-bus";
 import { widgetRegistry } from "./widget-registry";
 import { WidgetShell } from "./widget-shell";
 import type { WidgetInstance } from "./widget-types";
@@ -65,35 +66,37 @@ export function DashboardCanvas({ boardId, widgets }: DashboardCanvasProps) {
   );
 
   return (
-    <div ref={containerRef}>
-      <ResponsiveGridLayout
-        width={width}
-        layouts={{ lg: layout }}
-        rowHeight={60}
-        dragConfig={{ handle: ".widget-drag-handle", cancel: ".widget-remove-button" }}
-        onLayoutChange={handleLayoutChange}
-      >
-        {layout.map((item) => {
-          const widget = widgetsById.get(item.i);
-          if (!widget) return null;
-          const definition = widgetRegistry.get(widget.type);
-          const configTitle =
-            typeof widget.config?.title === "string" ? widget.config.title.trim() : "";
-          const instanceTitle = configTitle.length > 0 ? configTitle : undefined;
+    <WidgetDataBusProvider>
+      <div ref={containerRef}>
+        <ResponsiveGridLayout
+          width={width}
+          layouts={{ lg: layout }}
+          rowHeight={60}
+          dragConfig={{ handle: ".widget-drag-handle", cancel: ".widget-remove-button" }}
+          onLayoutChange={handleLayoutChange}
+        >
+          {layout.map((item) => {
+            const widget = widgetsById.get(item.i);
+            if (!widget) return null;
+            const definition = widgetRegistry.get(widget.type);
+            const configTitle =
+              typeof widget.config?.title === "string" ? widget.config.title.trim() : "";
+            const instanceTitle = configTitle.length > 0 ? configTitle : undefined;
 
-          return (
-            <div key={widget.id}>
-              <WidgetShell title={instanceTitle ?? definition?.label ?? widget.type}>
-                {definition ? (
-                  <definition.component instance={widget} boardId={boardId} />
-                ) : (
-                  <div>Unknown widget type: {widget.type}</div>
-                )}
-              </WidgetShell>
-            </div>
-          );
-        })}
-      </ResponsiveGridLayout>
-    </div>
+            return (
+              <div key={widget.id}>
+                <WidgetShell title={instanceTitle ?? definition?.label ?? widget.type}>
+                  {definition ? (
+                    <definition.component instance={widget} boardId={boardId} />
+                  ) : (
+                    <div>Unknown widget type: {widget.type}</div>
+                  )}
+                </WidgetShell>
+              </div>
+            );
+          })}
+        </ResponsiveGridLayout>
+      </div>
+    </WidgetDataBusProvider>
   );
 }
