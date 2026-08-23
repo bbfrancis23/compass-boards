@@ -17,10 +17,19 @@ export function useWidgetData(boardId: string, widgetInstanceId: string): UseWid
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  // Reset loading/error as soon as a new request starts, rather than
+  // synchronously inside the effect below, per
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes.
+  const requestKey = `${boardId}:${widgetInstanceId}`;
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+  if (requestKey !== prevRequestKey) {
+    setPrevRequestKey(requestKey);
     setLoading(true);
     setError(null);
+  }
+
+  useEffect(() => {
+    let cancelled = false;
 
     getWidgetData(boardId, widgetInstanceId)
       .then((rows) => {
