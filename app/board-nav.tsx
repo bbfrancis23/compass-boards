@@ -173,7 +173,7 @@ export function BoardNav() {
             }}
           />
         ))}     
-          {CONSTRUCTION_NAV_ITEMS.map((item, index) => {
+          {CONSTRUCTION_NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink

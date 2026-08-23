@@ -47,12 +47,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <div style={{ display: "flex", minHeight: "100vh" }}>
             <div style={{ display: "flex", flexDirection: "column", flexShrink: 0, background: `${PARCHMENT} url('${BACKGROUND_IMAGE}') center / 100% no-repeat`,}}>
               <BoardNav />
-
-               <Group gap={10} px={20} py={16} wrap="nowrap" style={{ borderTop: '0.5px solid rgba(92,67,38,0.3)' }}>
-                     
-             
-                <UserMenu />
-                     
+                <Group gap={10} px={20} py={16} wrap="nowrap" style={{ marginTop: "auto", borderTop: '0.5px solid rgba(92,67,38,0.3)' }}>  
+                <UserMenu />                     
               </Group>
             </div>
             <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
