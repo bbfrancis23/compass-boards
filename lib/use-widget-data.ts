@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getWidgetData } from "./widget-data-actions";
+import { useWidgetDataVersion } from "./widget-data-bus";
 
 export interface UseWidgetDataResult {
   data: Record<string, unknown>[];
@@ -16,6 +17,7 @@ export function useWidgetData(boardId: string, widgetInstanceId: string): UseWid
   const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const version = useWidgetDataVersion(widgetInstanceId);
 
   // Reset loading/error as soon as a new request starts, rather than
   // synchronously inside the effect below, per
@@ -46,7 +48,7 @@ export function useWidgetData(boardId: string, widgetInstanceId: string): UseWid
     return () => {
       cancelled = true;
     };
-  }, [boardId, widgetInstanceId]);
+  }, [boardId, widgetInstanceId, version]);
 
   return { data, loading, error };
 }
