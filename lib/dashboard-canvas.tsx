@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ResponsiveGridLayout, useContainerWidth, type Layout } from "react-grid-layout";
 import "react-resizable/css/styles.css";
 import { updateWidgetLayout } from "./widget-actions";
@@ -29,8 +29,11 @@ export function DashboardCanvas({ boardId, widgets }: DashboardCanvasProps) {
   // Reconcile layout state when the widgets prop changes (widgets added or
   // removed elsewhere, or a page refetch), keeping the in-session position
   // of any widget that's still present rather than resetting everything to
-  // its last-saved position.
-  useEffect(() => {
+  // its last-saved position. Adjusted during render (not an effect) per
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes.
+  const [prevWidgets, setPrevWidgets] = useState(widgets);
+  if (prevWidgets !== widgets) {
+    setPrevWidgets(widgets);
     setLayout((prevLayout) => {
       const prevById = new Map(prevLayout.map((item) => [item.i, item]));
       return widgets.map(
@@ -44,7 +47,7 @@ export function DashboardCanvas({ boardId, widgets }: DashboardCanvasProps) {
           },
       );
     });
-  }, [widgets]);
+  }
 
   const handleLayoutChange = useCallback(
     (nextLayout: Layout) => {
