@@ -32,6 +32,10 @@ export function useBoardAdvice(boardId: string, enabled: boolean): UseBoardAdvic
     if (requestKey !== null) {
       setLoading(true);
       setError(null);
+    } else {
+      // Disabling cancels any in-flight request (see the effect's cleanup
+      // below), so its `.finally` never runs to clear `loading` itself.
+      setLoading(false);
     }
   }
 
