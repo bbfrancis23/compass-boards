@@ -2,9 +2,8 @@
 
 /**
  * Advice generation calls the Anthropic API, which costs real money per
- * request. Disabled until auth (#28-32) is wired up, so an anonymous
- * visitor to the deployed app can't run up the bill. Checked both in the
- * UI (lib/advice-widget.tsx) and, as the actual enforcement boundary, in
- * the getBoardAdvice server action (lib/advice-actions.ts).
+ * request. Auth is now wired up, and getBoardAdvice (lib/advice-actions.ts)
+ * requires a session before calling out, so this just gates the UI
+ * (lib/advice-widget.tsx) on top of that.
  */
-export const ADVICE_ENABLED = false;
+export const ADVICE_ENABLED = true;
