@@ -32,8 +32,6 @@ export async function getBoardAdvice(boardId: string): Promise<string> {
   const response = await getClaudeClient().messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 2048,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "medium" },
     messages: [{ role: "user", content: config.buildAdvicePrompt(data) }],
   });
 
