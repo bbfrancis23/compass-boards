@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx eslint *)",
+      "Bash(npx tsc *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh pr create --repo bbfrancis23/compass-boards --title 'Lazily construct the Anthropic client' --body ' *)",
+      "Bash(gh issue create --repo bbfrancis23/compass-boards --title 'Chart widgets don'\\\\''t update live after a sibling input widget submits data' --body ' *)",
+      "Bash(git branch *)",
+      "Bash(gh pr *)",
+      "Bash(gh api *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
